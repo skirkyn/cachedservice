@@ -1,0 +1,12 @@
+{
+  "cache": {
+    "enabled": true
+  },
+  "redis": {
+    "url": "127.0.0.1:6379"
+  },
+  "project": {
+    "id": "<project_id>",
+    "credentials": "/Users/annaskirko/Downloads/cachedservice-38b486ad8986.json"
+  }
+}
