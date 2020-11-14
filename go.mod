@@ -1,4 +1,4 @@
-module cachedservice
+module github.com/skirkyn/cachedservice
 
 go 1.14
 
