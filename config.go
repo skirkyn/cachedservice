@@ -1,9 +1,9 @@
 package cachedservice
 
 import (
-	"cachedservice/internal/util"
 	"github.com/spf13/viper"
 	"log"
+	"os"
 )
 
 const (
@@ -27,7 +27,7 @@ func newConfigHolder(path string) *ConfigHolder {
 	if path == "" {
 		log.Fatalln("path is empty")
 	}
-	if !util.FileExists(path) {
+	if !fileExists(path) {
 		log.Fatalln("file doesn't exist", path)
 	}
 	v := viper.New()
@@ -42,4 +42,12 @@ func newConfigHolder(path string) *ConfigHolder {
 
 func (cfg ConfigHolder) getConfig() *viper.Viper {
 	return cfg.config
+}
+
+func fileExists(path string) bool {
+	info, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }
