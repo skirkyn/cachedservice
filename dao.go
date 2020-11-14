@@ -1,18 +1,17 @@
-package dao
+package cachedservice
 
 import (
 	"cloud.google.com/go/firestore"
-	"cachedservice/pkg/fstore"
 )
 
 type Dao struct {
-	firestore  fstore.Firestore
+	firestore  Firestore
 	collection string
 	idConsumer func(string, interface{})
 	idProvider func(interface{}) string
 }
 
-func NewDao(firestore fstore.Firestore, collection string, idConsumer func(string, interface{}), idProvider func(interface{}) string) *Dao {
+func NewDao(firestore Firestore, collection string, idConsumer func(string, interface{}), idProvider func(interface{}) string) *Dao {
 	return &Dao{firestore: firestore, collection: collection, idConsumer: idConsumer, idProvider: idProvider}
 }
 

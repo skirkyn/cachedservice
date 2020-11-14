@@ -1,16 +1,29 @@
-package config
+package cachedservice
 
 import (
+	"cachedservice/internal/util"
 	"github.com/spf13/viper"
 	"log"
-	"cachedservice/pkg/util"
 )
+
+const (
+	cacheEnabled = "cache.enabled"
+	redisUrl     = "redis.url"
+	projectId    = "project.id"
+	credentials  = "project.credentials"
+)
+
 type ConfigPath string
+
 type ConfigHolder struct {
 	config *viper.Viper
 }
 
-func NewConfigHolder(path string) *ConfigHolder {
+func NewConfig(path ConfigPath) *viper.Viper {
+	return newConfigHolder(string(path)).getConfig()
+}
+
+func newConfigHolder(path string) *ConfigHolder {
 	if path == "" {
 		log.Fatalln("path is empty")
 	}
@@ -20,8 +33,8 @@ func NewConfigHolder(path string) *ConfigHolder {
 	v := viper.New()
 	v.SetConfigType("json")
 	v.SetConfigFile(path)
-	err:=v.ReadInConfig()
-	if err!= nil{
+	err := v.ReadInConfig()
+	if err != nil {
 		log.Fatalln("error reading config", path)
 	}
 	return &ConfigHolder{config: v}

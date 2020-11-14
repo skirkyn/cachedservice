@@ -2,25 +2,22 @@ package cachedservice
 
 import (
 	"encoding/json"
-	"cachedservice/pkg/cache"
-	"cachedservice/pkg/converter"
-	"cachedservice/pkg/dao"
 	"fmt"
 	"log"
 )
 
-type Service struct {
-	dao        *dao.GenericDao
-	cache      *cache.CacheService
-	cnv        *converter.GenericConverter
+type CachedService struct {
+	dao        *GenericDao
+	cache      *GenericCache
+	cnv        *GenericConverter
 	idProvider func(interface{}) string
 }
 
-func NewService(dao *dao.GenericDao, cache *cache.CacheService, cnv *converter.GenericConverter, idProvider func(interface{}) string) Service {
-	return Service{dao: dao, cache: cache, cnv: cnv, idProvider: idProvider}
+func NewCachedService(dao *GenericDao, cache *GenericCache, cnv *GenericConverter, idProvider func(interface{}) string) CachedService {
+	return CachedService{dao: dao, cache: cache, cnv: cnv, idProvider: idProvider}
 }
 
-func (srv Service) Get(id string) (interface{}, error) {
+func (srv CachedService) Get(id string) (interface{}, error) {
 
 	cached, err := (*srv.cache).GetById(id)
 	if err == nil && cached != nil {
@@ -34,7 +31,7 @@ func (srv Service) Get(id string) (interface{}, error) {
 	return cached, err
 }
 
-func (srv Service) Update(id string, entity interface{}) (interface{}, error) {
+func (srv CachedService) Update(id string, entity interface{}) (interface{}, error) {
 
 	prevState, err := (*srv.dao).Get(id)
 	if err == nil {
@@ -57,7 +54,7 @@ func (srv Service) Update(id string, entity interface{}) (interface{}, error) {
 
 }
 
-func (srv Service) Create(entity interface{}) (interface{}, error) {
+func (srv CachedService) Create(entity interface{}) (interface{}, error) {
 	log.Println("creating a new entity")
 
 	created, err := (*srv.dao).Create(entity)
@@ -90,7 +87,7 @@ func (srv Service) Create(entity interface{}) (interface{}, error) {
 
 }
 
-func (srv Service) Delete(id string) (interface{}, error) {
+func (srv CachedService) Delete(id string) (interface{}, error) {
 	deleted, err := (*srv.dao).Delete(id)
 	if err == nil {
 		_, err := (*srv.cache).Del(id)
@@ -105,7 +102,7 @@ func (srv Service) Delete(id string) (interface{}, error) {
 	}
 }
 
-func (srv Service) GetByIds(ids []string) (interface{}, error) {
+func (srv CachedService) GetByIds(ids []string) (interface{}, error) {
 	fromCache, err := (*srv.cache).GetByIds(ids)
 	if err == nil {
 		return (*srv.cnv).FromBinaryJsonSlice(fromCache)
@@ -119,7 +116,7 @@ func (srv Service) GetByIds(ids []string) (interface{}, error) {
 	}
 }
 
-func (srv Service) GetByString(path, query string) (interface{}, error) {
+func (srv CachedService) GetByString(path, query string) (interface{}, error) {
 	iter := (*srv.dao).GetByString(path, query)
 	res := make([]interface{}, 0)
 	resErr := make([]error, 0)
